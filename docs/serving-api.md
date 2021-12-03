@@ -908,6 +908,21 @@ target concurrency for the autoscaler.</p>
 </tr>
 <tr>
 <td>
+<code>scaleTargetRef</code><br/>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectreference-v1-core">
+Kubernetes core/v1.ObjectReference
+</a>
+</em>
+</td>
+<td>
+<p>ScaleTargetRef defines the /scale-able resource that this Revision
+is responsible for quickly right-sizing. If containers is an empty array
+and ScaleTargetRef is defined, will not create a container.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>timeoutSeconds</code><br/>
 <em>
 int64
@@ -1370,6 +1385,21 @@ target concurrency for the autoscaler.</p>
 </tr>
 <tr>
 <td>
+<code>scaleTargetRef</code><br/>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectreference-v1-core">
+Kubernetes core/v1.ObjectReference
+</a>
+</em>
+</td>
+<td>
+<p>ScaleTargetRef defines the /scale-able resource that this Revision
+is responsible for quickly right-sizing. If containers is an empty array
+and ScaleTargetRef is defined, will not create a container.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>timeoutSeconds</code><br/>
 <em>
 int64
@@ -1547,6 +1577,21 @@ int64
 requests per container of the Revision.  Defaults to <code>0</code> which means
 concurrency to the application is not limited, and the system decides the
 target concurrency for the autoscaler.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>scaleTargetRef</code><br/>
+<em>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectreference-v1-core">
+Kubernetes core/v1.ObjectReference
+</a>
+</em>
+</td>
+<td>
+<p>ScaleTargetRef defines the /scale-able resource that this Revision
+is responsible for quickly right-sizing. If containers is an empty array
+and ScaleTargetRef is defined, will not create a container.</p>
 </td>
 </tr>
 <tr>

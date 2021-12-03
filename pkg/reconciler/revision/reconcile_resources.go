@@ -40,6 +40,11 @@ import (
 func (c *Reconciler) reconcileDeployment(ctx context.Context, rev *v1.Revision) error {
 	ns := rev.Namespace
 	deploymentName := resourcenames.Deployment(rev)
+	isDPRef := false
+	if rev.Spec.ScaleTargetRef != nil {
+		deploymentName = rev.Spec.ScaleTargetRef.Name
+		isDPRef = true
+	}
 	logger := logging.FromContext(ctx).With(zap.String(logkey.Deployment, deploymentName))
 
 	deployment, err := c.deploymentLister.Deployments(ns).Get(deploymentName)
@@ -47,22 +52,27 @@ func (c *Reconciler) reconcileDeployment(ctx context.Context, rev *v1.Revision) 
 		// Deployment does not exist. Create it.
 		rev.Status.MarkResourcesAvailableUnknown(v1.ReasonDeploying, "")
 		rev.Status.MarkContainerHealthyUnknown(v1.ReasonDeploying, "")
-		deployment, err = c.createDeployment(ctx, rev)
-		if err != nil {
-			return fmt.Errorf("failed to create deployment %q: %w", deploymentName, err)
+		if !isDPRef {
+			deployment, err = c.createDeployment(ctx, rev)
+			if err != nil {
+				return fmt.Errorf("failed to create deployment %q: %w", deploymentName, err)
+			}
+			logger.Infof("Created deployment %q", deploymentName)
 		}
-		logger.Infof("Created deployment %q", deploymentName)
 	} else if err != nil {
 		return fmt.Errorf("failed to get deployment %q: %w", deploymentName, err)
-	} else if !metav1.IsControlledBy(deployment, rev) {
+	} else if !metav1.IsControlledBy(deployment, rev) && !isDPRef {
 		// Surface an error in the revision's status, and return an error.
 		rev.Status.MarkResourcesAvailableFalse(v1.ReasonNotOwned, v1.ResourceNotOwnedMessage("Deployment", deploymentName))
 		return fmt.Errorf("revision: %q does not own Deployment: %q", rev.Name, deploymentName)
 	} else {
 		// The deployment exists, but make sure that it has the shape that we expect.
-		deployment, err = c.checkAndUpdateDeployment(ctx, rev, deployment)
-		if err != nil {
-			return fmt.Errorf("failed to update deployment %q: %w", deploymentName, err)
+		// if deployment is ref do not async it.
+		if rev.Spec.ScaleTargetRef == nil {
+			deployment, err = c.checkAndUpdateDeployment(ctx, rev, deployment)
+			if err != nil {
+				return fmt.Errorf("failed to update deployment %q: %w", deploymentName, err)
+			}
 		}
 
 		// Now that we have a Deployment, determine whether there is any relevant

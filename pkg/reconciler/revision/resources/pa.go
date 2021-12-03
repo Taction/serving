@@ -28,6 +28,10 @@ import (
 
 // MakePA makes a Knative Pod Autoscaler resource from a revision.
 func MakePA(rev *v1.Revision) *autoscalingv1alpha1.PodAutoscaler {
+	deploymentName := names.Deployment(rev)
+	if rev.Spec.ScaleTargetRef != nil {
+		deploymentName = rev.Spec.ScaleTargetRef.Name
+	}
 	return &autoscalingv1alpha1.PodAutoscaler{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:            names.PA(rev),
@@ -41,7 +45,7 @@ func MakePA(rev *v1.Revision) *autoscalingv1alpha1.PodAutoscaler {
 			ScaleTargetRef: corev1.ObjectReference{
 				APIVersion: "apps/v1",
 				Kind:       "Deployment",
-				Name:       names.Deployment(rev),
+				Name:       deploymentName,
 			},
 			ProtocolType: rev.GetProtocol(),
 			Reachability: func() autoscalingv1alpha1.ReachabilityType {

@@ -83,6 +83,11 @@ type RevisionSpec struct {
 	// +optional
 	ContainerConcurrency *int64 `json:"containerConcurrency,omitempty"`
 
+	// ScaleTargetRef defines the /scale-able resource that this Revision
+	// is responsible for quickly right-sizing. If containers is an empty array
+	// and ScaleTargetRef is defined, will not create a container.
+	ScaleTargetRef *corev1.ObjectReference `json:"scaleTargetRef,omitempty"`
+
 	// TimeoutSeconds is the maximum duration in seconds that the request routing
 	// layer will wait for a request delivered to a container to begin replying
 	// (send network traffic). If unspecified, a system default will be provided.

@@ -1,0 +1,9 @@
+# pure image will run as non root
+FROM gcr.oneitfarm.com/distroless/static:noroot
+#FROM ubuntu:latest
+ARG BIN
+WORKDIR /
+
+COPY bin/${BIN} /execbin
+
+CMD /execbin

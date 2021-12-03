@@ -9,3 +9,10 @@
 # Temporary output of build tools
 bazel-*
 *.out
+cmd/autoscaler-hpa/kodata
+cmd/autoscaler/kodata
+cmd/controller/kodata
+cmd/queue/kodata
+cmd/webhook/kodata
+test
+cmd/activator/kodata

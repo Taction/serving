@@ -103,7 +103,15 @@ func (rts *RevisionTemplateSpec) VerifyNameChange(_ context.Context, og *Revisio
 
 // Validate implements apis.Validatable
 func (rs *RevisionSpec) Validate(ctx context.Context) *apis.FieldError {
-	errs := serving.ValidatePodSpec(ctx, rs.PodSpec)
+	var errs *apis.FieldError
+
+	// If ScaleTargetRef appears, pod spec will not be used
+	if rs.ScaleTargetRef != nil {
+		errs = serving.ValidateNamespacedObjectReference(rs.ScaleTargetRef).
+			ViaField("scaleTargetRef")
+	} else {
+		errs = serving.ValidatePodSpec(ctx, rs.PodSpec)
+	}
 
 	if rs.TimeoutSeconds != nil {
 		errs = errs.Also(validateTimeoutSeconds(ctx, *rs.TimeoutSeconds))

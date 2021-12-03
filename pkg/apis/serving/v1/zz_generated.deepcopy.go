@@ -22,6 +22,7 @@ limitations under the License.
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	apis "knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
@@ -223,6 +224,11 @@ func (in *RevisionSpec) DeepCopyInto(out *RevisionSpec) {
 	if in.ContainerConcurrency != nil {
 		in, out := &in.ContainerConcurrency, &out.ContainerConcurrency
 		*out = new(int64)
+		**out = **in
+	}
+	if in.ScaleTargetRef != nil {
+		in, out := &in.ScaleTargetRef, &out.ScaleTargetRef
+		*out = new(corev1.ObjectReference)
 		**out = **in
 	}
 	if in.TimeoutSeconds != nil {
